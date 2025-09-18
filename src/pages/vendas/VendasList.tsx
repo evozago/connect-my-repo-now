@@ -137,7 +137,7 @@ function fmtBRL(n: number | string | null | undefined) {
   const v = Number(n ?? 0);
   return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
-const inp: React.CSSProperties = { border: "1px solid "#ddd", borderRadius: 8, padding: 10, fontSize: 14 };
+const inp: React.CSSProperties = { border: "1px solid #ddd", borderRadius: 8, padding: 10, fontSize: 14 };
 const th: React.CSSProperties = { textAlign: "left", padding: 10, borderBottom: "1px solid #eee", fontWeight: 600, fontSize: 13 };
 const td: React.CSSProperties = { padding: 10, borderBottom: "1px solid #f5f5f5", fontSize: 14 };
 const tdRight: React.CSSProperties = { ...td, textAlign: "right", whiteSpace: "nowrap" };
