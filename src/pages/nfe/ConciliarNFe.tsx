@@ -81,7 +81,7 @@ export default function ConciliarNFe() {
     }
 
     const map: Record<string, number> = {};
-    (data as ContaLinkRow[]).forEach((row) => {
+    (data as unknown as ContaLinkRow[]).forEach((row) => {
       const contaId = row?.parcelas_conta_pagar?.conta_pagar_id;
       if (row.chave_acesso && typeof contaId === "number") {
         // prioriza o primeiro que encontrar

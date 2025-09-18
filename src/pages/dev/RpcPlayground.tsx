@@ -1,6 +1,6 @@
 // src/pages/dev/RpcPlayground.tsx
 import React, { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "../../integrations/supabase/client";
 
 export default function RpcPlayground() {
   const [entidadeId, setEntidadeId] = useState<number>(10);

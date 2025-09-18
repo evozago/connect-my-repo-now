@@ -191,7 +191,7 @@ export default function ImportarNFe() {
           status_target: d.status_target,
           pago_em: d.pago_em || null
         }));
-        const { error: insErr } = await supabase.from("nfe_duplicatas").insert(rows, { upsert: true });
+        const { error: insErr } = await supabase.from("nfe_duplicatas").upsert(rows);
         if (insErr) throw insErr;
 
         setResultado(`NFe ${numero || "-"} / ${serie || "-"} importada. ${rows.length} duplicata(s) gravada(s).`);
@@ -246,7 +246,7 @@ export default function ImportarNFe() {
         pago_em: r.status_target === "paga" ? (r.pago_em || r.data_venc) : null
       }));
 
-      const { error: insErr } = await supabase.from("nfe_duplicatas").insert(rows, { upsert: true });
+      const { error: insErr } = await supabase.from("nfe_duplicatas").upsert(rows);
       if (insErr) throw insErr;
 
       setResultado(`${rows.length} duplicata(s) gravada(s) para a chave ${manualChave}. Agora concilie a NFe.`);
