@@ -16,6 +16,8 @@ import ContasLista from "./pages/financeiro/ContasLista";
 import ContaDetalhe from "./pages/financeiro/ContaDetalhe";
 import ContaNova from "./pages/financeiro/ContaNova";
 import ContaAnexos from "./pages/financeiro/ContaAnexos";
+import ContasListaEnhanced from "./pages/financeiro/ContasListaEnhanced";
+import ContasListaDemo from "./pages/financeiro/ContasListaDemo";
 
 // RECORRENTES
 import RecorrentesList from "./pages/recorrentes/RecorrentesList";
@@ -68,6 +70,8 @@ export const router = createBrowserRouter([
 
       // CONTAS A PAGAR
       { path: "/financeiro/contas", element: <ContasLista /> },
+      { path: "/financeiro/contas-enhanced", element: <ContasListaEnhanced /> },
+      { path: "/financeiro/contas-demo", element: <ContasListaDemo /> },
       { path: "/financeiro/contas/nova", element: <ContaNova /> },
       { path: "/financeiro/contas/:id", element: <ContaDetalhe /> },
       { path: "/financeiro/contas/:id/anexos", element: <ContaAnexos /> },

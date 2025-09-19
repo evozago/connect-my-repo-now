@@ -1,7 +1,8 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import { Button } from "./button";
 import { Input } from "./input";
 import { Badge } from "./badge";
+import { Checkbox } from "./checkbox";
 import { 
   Table, 
   TableBody, 
@@ -16,7 +17,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "./dropdown-menu";
-import { Settings2, Search, X } from "lucide-react";
+import { Settings2, Search, X, Edit, Trash2, DollarSign } from "lucide-react";
 
 export type DataTableColumn<T> = {
   key: keyof T | string;
@@ -47,6 +48,13 @@ interface DataTableProps<T> {
   actions?: (item: T) => React.ReactNode;
   emptyMessage?: string;
   className?: string;
+  selectable?: boolean;
+  onSelectionChange?: (selectedItems: T[]) => void;
+  bulkActions?: {
+    onEdit?: (items: T[]) => void;
+    onMarkAsPaid?: (items: T[]) => void;
+    onDelete?: (items: T[]) => void;
+  };
 }
 
 export function DataTable<T extends Record<string, any>>({
@@ -60,12 +68,17 @@ export function DataTable<T extends Record<string, any>>({
   actions,
   emptyMessage = "Nenhum registro encontrado",
   className,
+  selectable = false,
+  onSelectionChange,
+  bulkActions,
 }: DataTableProps<T>) {
   const [searchQuery, setSearchQuery] = useState("");
   const [visibleColumns, setVisibleColumns] = useState<Set<string>>(
     new Set(allColumns.map(col => col.key as string))
   );
   const [activeFilters, setActiveFilters] = useState<DataTableFilter[]>(filters);
+  const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
+  const [lastSelectedIndex, setLastSelectedIndex] = useState<number | null>(null);
 
   // Filtered columns based on visibility
   const columns = allColumns.filter(col => visibleColumns.has(col.key as string));
@@ -123,6 +136,58 @@ export function DataTable<T extends Record<string, any>>({
 
   const activeFilterCount = activeFilters.filter(f => f.value).length;
 
+  // Selection handlers
+  const handleSelectItem = useCallback((item: T, index: number, event: React.MouseEvent) => {
+    const itemId = String(item.id || index);
+    const newSelected = new Set(selectedItems);
+
+    if (event.shiftKey && lastSelectedIndex !== null) {
+      // Range selection with Shift key
+      const start = Math.min(lastSelectedIndex, index);
+      const end = Math.max(lastSelectedIndex, index);
+      
+      for (let i = start; i <= end; i++) {
+        if (i < filteredData.length) {
+          const rangeItemId = String(filteredData[i].id || i);
+          newSelected.add(rangeItemId);
+        }
+      }
+    } else {
+      // Single selection
+      if (newSelected.has(itemId)) {
+        newSelected.delete(itemId);
+      } else {
+        newSelected.add(itemId);
+      }
+      setLastSelectedIndex(index);
+    }
+
+    setSelectedItems(newSelected);
+    
+    if (onSelectionChange) {
+      const selectedData = filteredData.filter((item, idx) => 
+        newSelected.has(String(item.id || idx))
+      );
+      onSelectionChange(selectedData);
+    }
+  }, [selectedItems, lastSelectedIndex, filteredData, onSelectionChange]);
+
+  const handleSelectAll = useCallback(() => {
+    if (selectedItems.size === filteredData.length) {
+      setSelectedItems(new Set());
+      onSelectionChange?.([]);
+    } else {
+      const allIds = new Set(filteredData.map((item, idx) => String(item.id || idx)));
+      setSelectedItems(allIds);
+      onSelectionChange?.(filteredData);
+    }
+  }, [selectedItems.size, filteredData, onSelectionChange]);
+
+  const selectedCount = selectedItems.size;
+  const selectedData = filteredData.filter((item, idx) => 
+    selectedItems.has(String(item.id || idx))
+  );
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-32">
@@ -133,6 +198,64 @@ export function DataTable<T extends Record<string, any>>({
 
   return (
     <div className={`space-y-4 ${className}`}>
+      {/* Bulk Actions Bar */}
+      {selectable && selectedCount > 0 && (
+        <div className="flex items-center justify-between p-4 bg-primary/5 border border-primary/20 rounded-lg">
+          <div className="flex items-center gap-4">
+            <span className="text-sm font-medium">
+              {selectedCount} {selectedCount === 1 ? 'item selecionado' : 'itens selecionados'}
+            </span>
+            {bulkActions && (
+              <div className="flex items-center gap-2">
+                {bulkActions.onEdit && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => bulkActions.onEdit!(selectedData)}
+                    className="gap-2"
+                  >
+                    <Edit className="h-4 w-4" />
+                    Editar em Massa ({selectedCount})
+                  </Button>
+                )}
+                {bulkActions.onMarkAsPaid && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => bulkActions.onMarkAsPaid!(selectedData)}
+                    className="gap-2"
+                  >
+                    <DollarSign className="h-4 w-4" />
+                    Marcar como Pago
+                  </Button>
+                )}
+                {bulkActions.onDelete && (
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    onClick={() => bulkActions.onDelete!(selectedData)}
+                    className="gap-2"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    Excluir Selecionados
+                  </Button>
+                )}
+              </div>
+            )}
+          </div>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => {
+              setSelectedItems(new Set());
+              onSelectionChange?.([]);
+            }}
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
+      )}
+
       {/* Search and Column Controls */}
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-2 flex-1">
@@ -243,6 +366,17 @@ export function DataTable<T extends Record<string, any>>({
         <Table>
           <TableHeader>
             <TableRow>
+              {selectable && (
+                <TableHead className="w-12">
+                  <Checkbox
+                    checked={
+                      filteredData.length > 0 && selectedItems.size === filteredData.length
+                    }
+                    onCheckedChange={handleSelectAll}
+                    aria-label="Selecionar todos"
+                  />
+                </TableHead>
+              )}
               {columns.map((column) => (
                 <TableHead
                   key={column.key as string}
@@ -262,36 +396,57 @@ export function DataTable<T extends Record<string, any>>({
             {filteredData.length === 0 ? (
               <TableRow>
                 <TableCell 
-                  colSpan={columns.length + (actions ? 1 : 0)} 
+                  colSpan={columns.length + (actions ? 1 : 0) + (selectable ? 1 : 0)} 
                   className="text-center text-muted-foreground py-8"
                 >
                   {emptyMessage}
                 </TableCell>
               </TableRow>
             ) : (
-              filteredData.map((item, index) => (
-                <TableRow key={item.id || index}>
-                  {columns.map((column) => (
-                    <TableCell
-                      key={column.key as string}
-                      className={
-                        column.align === 'center' ? 'text-center' :
-                        column.align === 'right' ? 'text-right' : ''
-                      }
-                    >
-                      {column.render 
-                        ? column.render(item)
-                        : String(item[column.key] || "-")
-                      }
-                    </TableCell>
-                  ))}
-                  {actions && (
-                    <TableCell className="text-right">
-                      {actions(item)}
-                    </TableCell>
-                  )}
-                </TableRow>
-              ))
+              filteredData.map((item, index) => {
+                const itemId = String(item.id || index);
+                const isSelected = selectedItems.has(itemId);
+                
+                return (
+                  <TableRow 
+                    key={itemId}
+                    className={isSelected ? "bg-primary/5" : ""}
+                  >
+                    {selectable && (
+                      <TableCell>
+                        <Checkbox
+                          checked={isSelected}
+                          onCheckedChange={(checked) => {
+                            const event = { shiftKey: false } as React.MouseEvent;
+                            handleSelectItem(item, index, event);
+                          }}
+                          onClick={(event) => handleSelectItem(item, index, event)}
+                          aria-label={`Selecionar item ${index + 1}`}
+                        />
+                      </TableCell>
+                    )}
+                    {columns.map((column) => (
+                      <TableCell
+                        key={column.key as string}
+                        className={
+                          column.align === 'center' ? 'text-center' :
+                          column.align === 'right' ? 'text-right' : ''
+                        }
+                      >
+                        {column.render 
+                          ? column.render(item)
+                          : String(item[column.key] || "-")
+                        }
+                      </TableCell>
+                    ))}
+                    {actions && (
+                      <TableCell className="text-right">
+                        {actions(item)}
+                      </TableCell>
+                    )}
+                  </TableRow>
+                );
+              })
             )}
           </TableBody>
         </Table>
