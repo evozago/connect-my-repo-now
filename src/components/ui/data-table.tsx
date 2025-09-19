@@ -416,17 +416,15 @@ export function DataTable<T extends Record<string, any>>({
                     className={isSelected ? "bg-primary/5" : ""}
                   >
                     {selectable && (
-                  <TableCell>
-                    <div 
-                      onClick={(event) => handleSelectItem(item, index, event)}
-                      className="cursor-pointer p-1"
-                    >
-                      <Checkbox
-                        checked={isSelected}
-                        aria-label={`Selecionar item ${index + 1}`}
-                      />
-                    </div>
-                  </TableCell>
+                      <TableCell 
+                        onClick={(event) => handleSelectItem(item, index, event)}
+                        className="cursor-pointer p-2"
+                      >
+                        <Checkbox
+                          checked={isSelected}
+                          aria-label={`Selecionar item ${index + 1}`}
+                        />
+                      </TableCell>
                     )}
                     {columns.map((column) => (
                       <TableCell

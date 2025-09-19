@@ -288,25 +288,25 @@ export default function ContasListaDemo() {
         </Button>
       </div>
 
-      <div className="bg-accent/50 border border-accent rounded-lg p-4">
-        <h3 className="font-semibold mb-3 flex items-center gap-2">
+      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-6 shadow-sm">
+        <h3 className="font-semibold mb-4 flex items-center gap-2 text-blue-800">
           💡 Como usar este sistema:
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-          <div className="flex items-start gap-2">
-            <span className="text-primary">•</span>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-blue-700">
+          <div className="flex items-start gap-3">
+            <span className="text-blue-500 font-bold">✓</span>
             <span>Use as caixas de seleção para escolher itens</span>
           </div>
-          <div className="flex items-start gap-2">
-            <span className="text-primary">•</span>
-            <span>Segure <kbd className="px-1 py-0.5 text-xs bg-muted border rounded">Shift</kbd> + clique para seleção em intervalo</span>
+          <div className="flex items-start gap-3">
+            <span className="text-blue-500 font-bold">✓</span>
+            <span>Segure <kbd className="px-2 py-1 text-xs bg-blue-100 border border-blue-300 rounded shadow-sm font-mono">Shift</kbd> + clique para seleção em intervalo</span>
           </div>
-          <div className="flex items-start gap-2">
-            <span className="text-primary">•</span>
+          <div className="flex items-start gap-3">
+            <span className="text-blue-500 font-bold">✓</span>
             <span>Use "Editar em Massa" para alterar múltiplos campos</span>
           </div>
-          <div className="flex items-start gap-2">
-            <span className="text-primary">•</span>
+          <div className="flex items-start gap-3">
+            <span className="text-blue-500 font-bold">✓</span>
             <span>Use "Marcar como Pago" para processar pagamentos individualizados</span>
           </div>
         </div>
