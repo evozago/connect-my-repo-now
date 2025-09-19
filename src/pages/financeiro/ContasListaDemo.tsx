@@ -274,10 +274,10 @@ export default function ContasListaDemo() {
   };
 
   return (
-    <div className="container mx-auto py-6 space-y-6">
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">Contas a Pagar - Demo Avançado</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Contas a Pagar</h1>
           <p className="text-muted-foreground">
             Sistema completo com seleção múltipla, edição em massa e processamento de pagamentos
           </p>
@@ -288,14 +288,28 @@ export default function ContasListaDemo() {
         </Button>
       </div>
 
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <h3 className="font-medium text-blue-900 mb-2">💡 Como usar:</h3>
-        <ul className="text-sm text-blue-800 space-y-1">
-          <li>• Use as caixas de seleção para escolher itens</li>
-          <li>• Segure Shift + clique para seleção em intervalo</li>
-          <li>• Use "Editar em Massa" para alterar múltiplos campos</li>
-          <li>• Use "Marcar como Pago" para processar pagamentos individualizados</li>
-        </ul>
+      <div className="bg-accent/50 border border-accent rounded-lg p-4">
+        <h3 className="font-semibold mb-3 flex items-center gap-2">
+          💡 Como usar este sistema:
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+          <div className="flex items-start gap-2">
+            <span className="text-primary">•</span>
+            <span>Use as caixas de seleção para escolher itens</span>
+          </div>
+          <div className="flex items-start gap-2">
+            <span className="text-primary">•</span>
+            <span>Segure <kbd className="px-1 py-0.5 text-xs bg-muted border rounded">Shift</kbd> + clique para seleção em intervalo</span>
+          </div>
+          <div className="flex items-start gap-2">
+            <span className="text-primary">•</span>
+            <span>Use "Editar em Massa" para alterar múltiplos campos</span>
+          </div>
+          <div className="flex items-start gap-2">
+            <span className="text-primary">•</span>
+            <span>Use "Marcar como Pago" para processar pagamentos individualizados</span>
+          </div>
+        </div>
       </div>
 
       <DataTable

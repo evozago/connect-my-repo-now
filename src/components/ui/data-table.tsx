@@ -200,11 +200,14 @@ export function DataTable<T extends Record<string, any>>({
     <div className={`space-y-4 ${className}`}>
       {/* Bulk Actions Bar */}
       {selectable && selectedCount > 0 && (
-        <div className="flex items-center justify-between p-4 bg-primary/5 border border-primary/20 rounded-lg">
+        <div className="flex items-center justify-between p-4 bg-gradient-to-r from-primary/5 to-primary/10 border border-primary/20 rounded-lg backdrop-blur-sm">
           <div className="flex items-center gap-4">
-            <span className="text-sm font-medium">
-              {selectedCount} {selectedCount === 1 ? 'item selecionado' : 'itens selecionados'}
-            </span>
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+              <span className="text-sm font-semibold text-primary">
+                {selectedCount} {selectedCount === 1 ? 'item selecionado' : 'itens selecionados'}
+              </span>
+            </div>
             {bulkActions && (
               <div className="flex items-center gap-2">
                 {bulkActions.onEdit && (
@@ -212,7 +215,7 @@ export function DataTable<T extends Record<string, any>>({
                     size="sm"
                     variant="outline"
                     onClick={() => bulkActions.onEdit!(selectedData)}
-                    className="gap-2"
+                    className="gap-2 border-primary/30 hover:bg-primary/10"
                   >
                     <Edit className="h-4 w-4" />
                     Editar em Massa ({selectedCount})
@@ -221,9 +224,8 @@ export function DataTable<T extends Record<string, any>>({
                 {bulkActions.onMarkAsPaid && (
                   <Button
                     size="sm"
-                    variant="outline"
                     onClick={() => bulkActions.onMarkAsPaid!(selectedData)}
-                    className="gap-2"
+                    className="gap-2 bg-emerald-600 hover:bg-emerald-700"
                   >
                     <DollarSign className="h-4 w-4" />
                     Marcar como Pago
@@ -250,6 +252,7 @@ export function DataTable<T extends Record<string, any>>({
               setSelectedItems(new Set());
               onSelectionChange?.([]);
             }}
+            className="hover:bg-destructive/10 hover:text-destructive"
           >
             <X className="h-4 w-4" />
           </Button>
@@ -413,17 +416,17 @@ export function DataTable<T extends Record<string, any>>({
                     className={isSelected ? "bg-primary/5" : ""}
                   >
                     {selectable && (
-                      <TableCell>
-                        <Checkbox
-                          checked={isSelected}
-                          onCheckedChange={(checked) => {
-                            const event = { shiftKey: false } as React.MouseEvent;
-                            handleSelectItem(item, index, event);
-                          }}
-                          onClick={(event) => handleSelectItem(item, index, event)}
-                          aria-label={`Selecionar item ${index + 1}`}
-                        />
-                      </TableCell>
+                  <TableCell>
+                    <div 
+                      onClick={(event) => handleSelectItem(item, index, event)}
+                      className="cursor-pointer p-1"
+                    >
+                      <Checkbox
+                        checked={isSelected}
+                        aria-label={`Selecionar item ${index + 1}`}
+                      />
+                    </div>
+                  </TableCell>
                     )}
                     {columns.map((column) => (
                       <TableCell
